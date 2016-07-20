@@ -1,6 +1,9 @@
 export class Hero {
     id: number;
     name: string;
+    posX: number;
+    posY: number;
+    image: string;
 }
 
 

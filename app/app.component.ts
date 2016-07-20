@@ -5,14 +5,15 @@ import { HeroService }        from './hero.service';
 
 @Component({
     selector: 'my-app',
-
     template: `
-    <h1>{{title}}</h1>
-    <nav>
-      <a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
-      <a [routerLink]="['/heroes']" routerLinkActive="active">Heroes</a>
-    </nav>
     <router-outlet></router-outlet>
+    <div style="position: absolute;left: 10px; top: 10px; background: white; display: inline-block; padding: 10px; border 1px solid #000">
+        <h1>{{title}}</h1>
+        <nav>
+          <a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
+          <a [routerLink]="['/heroes']" routerLinkActive="active">Heroes</a>
+        </nav>
+    </div>
   `,
     styleUrls: ['app/app.component.css'],
     directives: [ROUTER_DIRECTIVES],
@@ -21,7 +22,7 @@ import { HeroService }        from './hero.service';
     ]
 })
 export class AppComponent {
-    title = 'Tour of Heroes';
+    title = 'EasyDungeon';
 }
 
 
