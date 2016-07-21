@@ -3,7 +3,8 @@ export class Hero {
     name: string;
     posX: number;
     posY: number;
-    image: string;
+    imagePath: string;
+    image: any;
     dragged:boolean
 }
 

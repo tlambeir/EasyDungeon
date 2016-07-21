@@ -119,11 +119,7 @@ export class DungeonComponent{
     }
 
     drawHero(hero, ctx, posx, posY){
-        let heroImage = new Image;
-        heroImage.onload = () => {
-            ctx.drawImage(heroImage, posx, posY, this.seperation, this.seperation);
-        };
-        heroImage.src = hero.image;
+        ctx.drawImage(hero.image, posx, posY, this.seperation, this.seperation);
     }
 
     removeHero(hero){
@@ -189,6 +185,51 @@ export class DungeonComponent{
         }
     }
 
+    // loader will 'load' items by calling thingToDo for each item,
+    // before calling allDone when all the things to do have been done.
+        loader(items, thingToDo, allDone) {
+        if (!items) {
+            // nothing to do.
+            return;
+        }
+
+        if ("undefined" === items.length) {
+            // convert single item to array.
+            items = [items];
+        }
+
+        let count = items.length;
+
+        // this callback counts down the things to do.
+        let thingToDoCompleted = function (items, i) {
+            count--;
+            if (0 == count) {
+                allDone(items);
+            }
+        };
+
+        for (let i = 0; i < items.length; i++) {
+            // 'do' each thing, and await callback.
+            thingToDo(items, i, thingToDoCompleted);
+        }
+    }
+
+    loadImage(items, i, onComplete){
+        let onLoad = function (e) {
+            e.target.removeEventListener("load", onLoad);
+
+            // this next line can be removed.
+            // only here to prove the image was loaded.
+            document.body.appendChild(e.target);
+
+            // notify that we're done.
+            onComplete(items, i);
+        }
+        items[i].image = new Image();
+        items[i].image.addEventListener("load", onLoad.bind(this), false);
+        items[i].image.src = items[i].imagePath;
+    }
+
     ngAfterViewInit() {
         this.canvas = this.canvasRef.nativeElement;
 
@@ -201,7 +242,9 @@ export class DungeonComponent{
             this.canvas.width  = window.innerWidth;
             this.canvas.height = window.innerHeight;
             this.getHeroes().then(()=>{
-                this.redraw(ctx);
+                this.loader(this.heroes, this.loadImage, function () {
+                    this.redraw(ctx);
+                }.bind(this));
             });
         };
         this.map.src = 'images/map.png';
