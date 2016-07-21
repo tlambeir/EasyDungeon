@@ -21,7 +21,7 @@ export class DungeonComponent{
     ball   = new Image;
     startX : any;
     startY : any;
-    seperation = 75;
+    seperation = 64;
 
     drawGrid() {
         let gridOptions = {
@@ -105,19 +105,87 @@ export class DungeonComponent{
     getHeroes() {
         return this.heroService
             .getHeroes()
-            .then(result => this.heroes = result)
-            .catch(error => this.error = error);
+            .then(result => this.heroes = result);
     }
 
     drawHeroes(ctx){
         for (let hero of this.heroes) {
+            if(!hero.dragged){
+                let posx = this.startX + hero.posX * this.seperation - this.seperation;
+                let posY = this.startY  + hero.posY * this.seperation - this.seperation;
+                this.drawHero(hero, ctx, posx, posY);
+            }
+        }
+    }
+
+    drawHero(hero, ctx, posx, posY){
+        let heroImage = new Image;
+        heroImage.onload = () => {
+            ctx.drawImage(heroImage, posx, posY, this.seperation, this.seperation);
+        };
+        heroImage.src = hero.image;
+    }
+
+    removeHero(hero){
+        let ctx = this.canvas.getContext('2d');
+        let posx = this.startX + hero.posX * this.seperation - this.seperation;
+        let posY = this.startY  + hero.posY * this.seperation - this.seperation;
+        ctx.clearRect(posx,posY,this.seperation,this.seperation);
+        this.redraw(ctx);
+    }
+
+    isHero(evt, lastX, lastY){
+        let isHero = false;
+        for (let hero of this.heroes) {
             let posx = this.startX + hero.posX * this.seperation - this.seperation;
-            let posY = this.startY  + hero.posY * this.seperation - this.seperation*2;
-            let heroImage = new Image;
-            heroImage.onload = () => {
-                ctx.drawImage(heroImage, posx, posY);
-            };
-            heroImage.src = hero.image;
+            let posY = this.startY  + hero.posY * this.seperation - this.seperation;
+            if(this.collides(posx, posY, lastX, lastY)){
+                isHero = true;
+                hero.dragged = true;
+                this.removeHero(hero);
+            }
+        }
+        return isHero;
+    }
+
+    collides(posx, posY, x, y) {
+        let isCollision = false;
+
+        let left = posx, right = posx+this.seperation;
+        let top = posY, bottom = posY+this.seperation;
+        if (right >= x
+            && left <= x
+            && bottom >= y
+            && top <= y) {
+            isCollision = true;
+        }
+        return isCollision;
+    }
+
+    draggedHeroLastX: any;
+    draggedHeroLastY: any;
+    dragHero(x,y){
+        let ctx = this.canvas.getContext('2d');
+        for (let hero of this.heroes) {
+            if(hero.dragged){
+                this.draggedHeroLastX = x;
+                this.draggedHeroLastY = y;
+                this.drawHero(hero, ctx, x - this.seperation/2, y - this.seperation/2);
+            }
+        }
+    }
+
+    positionHero(x,y){
+        let ctx = this.canvas.getContext('2d');
+        for (let hero of this.heroes) {
+            if(hero.dragged){
+                this.draggedHeroLastX = null;
+                this.draggedHeroLastY = null;
+                hero.posX = Math.ceil((x-this.startX)/this.seperation);
+                hero.posY = Math.ceil((y-this.startY)/this.seperation);
+                hero.dragged = false;
+                this.redraw(ctx);
+            }
         }
     }
 
@@ -136,7 +204,7 @@ export class DungeonComponent{
                 this.redraw(ctx);
             });
         };
-        this.map.src = 'images/map2.png';
+        this.map.src = 'images/map.png';
 
         this.ball.src   = 'http://phrogz.net/tmp/alphaball.png';
 
@@ -144,25 +212,39 @@ export class DungeonComponent{
         let lastX=this.canvas.width/2, lastY=this.canvas.height/2;
         let dragStart,dragged;
         this.canvas.addEventListener('mousedown',function(evt){
-            document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
             lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
             lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
-            dragStart = ctx.transformedPoint(lastX,lastY);
-            dragged = false;
-        },false);
+            let pt = ctx.transformedPoint(lastX,lastY);
+            if(this.isHero(evt, pt.x, pt.y)){
+                //drag the hero
+            } else {
+                //drag the map
+                //document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none'; // breaks ts compilation
+                dragStart = ctx.transformedPoint(lastX,lastY);
+                dragged = false;
+            }
+
+        }.bind(this),false);
         this.canvas.addEventListener('mousemove',function(evt){
             lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
             lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+            let pt = ctx.transformedPoint(lastX,lastY);
             dragged = true;
             if (dragStart){
-                let pt = ctx.transformedPoint(lastX,lastY);
                 ctx.translate(pt.x-dragStart.x,pt.y-dragStart.y);
                 this.redraw(ctx);
             }
+            if(this.draggedHeroLastX && this.draggedHeroLastY && (this.draggedHeroLastX!==pt.x || this.draggedHeroLastY !==pt.y)){
+                ctx.clearRect(this.draggedHeroLastX,this.draggedHeroLastY,this.seperation,this.seperation);
+                this.redraw(ctx);
+            }
+            this.dragHero(pt.x, pt.y);
         }.bind(this),false);
         this.canvas.addEventListener('mouseup',function(evt){
             dragStart = null;
             if (!dragged) this.zoom(evt.shiftKey ? -1 : 1 , ctx, lastX, lastY, scaleFactor);
+            let pt = ctx.transformedPoint(lastX,lastY);
+            this.positionHero(pt.x, pt.y);
         }.bind(this),false);
 
         let scaleFactor = 1.1;

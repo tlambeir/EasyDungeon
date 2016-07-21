@@ -4,6 +4,7 @@ export class Hero {
     posX: number;
     posY: number;
     image: string;
+    dragged:boolean
 }
 
 
