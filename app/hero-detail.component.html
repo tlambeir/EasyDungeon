@@ -1,15 +1,36 @@
-<div *ngIf="hero">
-    <h2>{{hero.name}} details!</h2>
-    <div>
-        <label>id: </label>{{hero.id}}</div>
-    <div>
-        <label>name: </label>
-        <input [(ngModel)]="hero.name" placeholder="name" />
-    </div>
-    <button (click)="goBack()">Back</button>
-    <button (click)="save()">Save</button>
-</div>
+<div style="padding: 10px; margin-top: 150px">
+    <div *ngIf="hero">
+        <h2>{{hero.name}} details!</h2>
+        <div>
+            <label>id: </label>{{hero.id}}</div>
+        <div>
+            <label>name: </label>
+            <input [(ngModel)]="hero.name" placeholder="name" />
+        </div>
+        <div>
+            <label>posX: </label>
+            <input [(ngModel)]="hero.posX" placeholder="x" />
+        </div>
+        <div>
+            <label>posY: </label>
+            <input [(ngModel)]="hero.posY" placeholder="y" />
+        </div>
+    <!--    <div>
+            <label>imagePath: </label>
+            <input [(ngModel)]="hero.imagePath" placeholder="url to image" />
+        </div>-->
+        <div>
+            <label>Image:</label>
+            <file-upload [hero]="hero"></file-upload>
+            <div>
+                <img src="{{hero.imagePath}}">
+            </div>
+        </div>
 
+        <button (click)="goBack()">Back</button>
+        <button (click)="save()">Save</button>
+    </div>
+</div>
 
 <!--
 Copyright 2016 Google Inc. All Rights Reserved.

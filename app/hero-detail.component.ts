@@ -4,11 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Hero }        from './hero';
 import { HeroService } from './hero.service';
+import { FileUploadComponent } from './file-upload.component';
 
 @Component({
     selector: 'my-hero-detail',
     templateUrl: 'app/hero-detail.component.html',
-    styleUrls: ['app/hero-detail.component.css']
+    styleUrls: ['app/hero-detail.component.css'],
+    directives: [FileUploadComponent]
 })
 export class HeroDetailComponent implements OnInit, OnDestroy {
     @Input() hero: Hero;
@@ -16,7 +18,6 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
     error: any;
     sub: any;
     navigated = false; // true if navigated here
-
     constructor(
         private heroService: HeroService,
         private route: ActivatedRoute) {

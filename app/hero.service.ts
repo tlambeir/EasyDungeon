@@ -8,20 +8,27 @@ import { Hero } from './hero';
 @Injectable()
 export class HeroService {
 
-    private heroesUrl = 'app/heroes';  // URL to web api
+    private heroesUrl = 'http://localhost:8000';  // URL to web api
 
     constructor(private http: Http) { }
 
     getHeroes(): Promise<Hero[]> {
         return this.http.get(this.heroesUrl)
             .toPromise()
-            .then(response => response.json().data)
+            /*.then(response => response.json().data)*/
+            .then(response => response.json())
             .catch(this.handleError);
     }
 
     getHero(id: number) {
-        return this.getHeroes()
-            .then(heroes => heroes.find(hero => hero.id === id));
+
+        let url = `${this.heroesUrl}/?id=${id}`;
+
+        return this.http
+            .get(url)
+            .toPromise()
+            .then(response => response.json())
+            .catch(this.handleError);
     }
 
     save(hero: Hero): Promise<Hero>  {
@@ -35,7 +42,7 @@ export class HeroService {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
 
-        let url = `${this.heroesUrl}/${hero.id}`;
+        let url = `${this.heroesUrl}/?id=${hero.id}`;
 
         return this.http
             .delete(url, {headers: headers})
@@ -45,13 +52,15 @@ export class HeroService {
 
     // Add new Hero
     private post(hero: Hero): Promise<Hero> {
+
+        console.dir(hero);
         let headers = new Headers({
             'Content-Type': 'application/json'});
 
         return this.http
             .post(this.heroesUrl, JSON.stringify(hero), {headers: headers})
             .toPromise()
-            .then(res => res.json().data)
+            .then(res => res.json())
             .catch(this.handleError);
     }
 

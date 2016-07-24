@@ -5,7 +5,8 @@ export class Hero {
     posY: number;
     imagePath: string;
     image: any;
-    dragged:boolean
+    dragged:boolean;
+    file:File;
 }
 
 

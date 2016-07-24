@@ -8,7 +8,7 @@ import { DungeonComponent } from './dungeon.component';
 const routes: RouterConfig = [
     {
         path: '',
-        redirectTo: '/dashboard',
+        redirectTo: '/dungeon',
         pathMatch: 'full'
     },
     {

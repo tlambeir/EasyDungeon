@@ -217,11 +217,6 @@ export class DungeonComponent{
     loadImage(items, i, onComplete){
         let onLoad = function (e) {
             e.target.removeEventListener("load", onLoad);
-
-            // this next line can be removed.
-            // only here to prove the image was loaded.
-            document.body.appendChild(e.target);
-
             // notify that we're done.
             onComplete(items, i);
         }

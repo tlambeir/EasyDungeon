@@ -1,18 +1,20 @@
-import { Component }          from '@angular/core';
-import { ROUTER_DIRECTIVES }  from '@angular/router';
+import { Component, OnInit }          from '@angular/core';
+import { Router, ROUTER_DIRECTIVES }  from '@angular/router';
 
 import { HeroService }        from './hero.service';
 
 @Component({
     selector: 'my-app',
     template: `
-    <router-outlet></router-outlet>
-    <div style="position: absolute;left: 10px; top: 10px; background: white; display: inline-block; padding: 10px; border 1px solid #000">
-        <h1>{{title}}</h1>
-        <nav>
-          <a [routerLink]="['/dashboard']" routerLinkActive="active">Dashboard</a>
-          <a [routerLink]="['/heroes']" routerLinkActive="active">Heroes</a>
-        </nav>
+    <div>
+        <router-outlet></router-outlet>
+        <div style="position: absolute;left: 10px; top: 10px; background: white; display: inline-block; padding: 10px; border 1px solid #000">
+            <h1>{{title}}</h1>
+            <nav>
+              <a [routerLink]="['/heroes']" routerLinkActive="active">Heroes</a>
+              <a [routerLink]="['/dungeon']" routerLinkActive="active">Dungeon</a>
+            </nav>
+        </div>
     </div>
   `,
     styleUrls: ['app/app.component.css'],
@@ -21,8 +23,15 @@ import { HeroService }        from './hero.service';
         HeroService,
     ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
     title = 'EasyDungeon';
+    constructor(
+        private router: Router) {
+    }
+    ngOnInit() {
+        console.log(this.router.url)
+    }
+
 }
 
 
