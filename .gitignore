@@ -6,3 +6,5 @@ typings
 images/
 npm-debug.log
 npm-debug.log*
+*workspace.xml
+*EasyDungeon.iml
