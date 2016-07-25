@@ -31,11 +31,23 @@ export class HeroService {
             .catch(this.handleError);
     }
 
-    save(hero: Hero): Promise<Hero>  {
-        if (hero.id) {
-            return this.put(hero);
+    saveHeroes(heroes: Hero[]){
+        for (let hero of heroes) {
+            this.save(hero);
         }
-        return this.post(hero);
+    }
+
+    save(hero: Hero): Promise<Hero>  {
+        let saveHero = new Hero;
+        saveHero.id = hero.id;
+        saveHero.name = hero.name;
+        saveHero.posX = hero.posX;
+        saveHero.posY = hero.posY;
+        saveHero.imagePath = hero.imagePath;
+        if (saveHero.id) {
+            return this.put(saveHero);
+        }
+        return this.post(saveHero);
     }
 
     delete(hero: Hero) {

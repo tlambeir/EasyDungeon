@@ -192,6 +192,7 @@ export class DungeonComponent{
                 if(!taken){
                     hero.posX = newPosX;
                     hero.posY = newPosY;
+                    this.heroService.save(hero);
                 }
                 hero.dragged = false;
                 this.redraw(ctx);
