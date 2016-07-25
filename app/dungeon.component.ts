@@ -136,6 +136,8 @@ export class DungeonComponent{
             let posx = this.startX + hero.posX * this.seperation - this.seperation;
             let posY = this.startY  + hero.posY * this.seperation - this.seperation;
             if(this.collides(posx, posY, lastX, lastY)){
+                hero.oldX = hero.posX;
+                hero.oldY = hero.posY;
                 isHero = true;
                 hero.dragged = true;
                 this.removeHero(hero);
@@ -177,8 +179,20 @@ export class DungeonComponent{
             if(hero.dragged){
                 this.draggedHeroLastX = null;
                 this.draggedHeroLastY = null;
-                hero.posX = Math.ceil((x-this.startX)/this.seperation);
-                hero.posY = Math.ceil((y-this.startY)/this.seperation);
+                let newPosX = Math.ceil((x-this.startX)/this.seperation);
+                let newPosY = Math.ceil((y-this.startY)/this.seperation);
+                let taken = false;
+                for (let otherHero of this.heroes) {
+                    if(otherHero.id != hero.id){
+                        if(otherHero.posX == newPosX && otherHero.posY == newPosY){
+                            taken = true;
+                        }
+                    }
+                }
+                if(!taken){
+                    hero.posX = newPosX;
+                    hero.posY = newPosY;
+                }
                 hero.dragged = false;
                 this.redraw(ctx);
             }
