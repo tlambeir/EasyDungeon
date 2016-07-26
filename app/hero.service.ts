@@ -8,7 +8,7 @@ import { Hero } from './hero';
 @Injectable()
 export class HeroService {
 
-    private heroesUrl = 'http://localhost:8000';  // URL to web api
+    private heroesUrl = 'http://localhost:8000/heroes';  // URL to web api
 
     constructor(private http: Http) { }
 
@@ -22,7 +22,7 @@ export class HeroService {
 
     getHero(id: number) {
 
-        let url = `${this.heroesUrl}/?id=${id}`;
+        let url = `${this.heroesUrl}/${id}`;
 
         return this.http
             .get(url)
@@ -54,7 +54,7 @@ export class HeroService {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
 
-        let url = `${this.heroesUrl}/?id=${hero.id}`;
+        let url = `${this.heroesUrl}/${hero.id}`;
 
         return this.http
             .delete(url, {headers: headers})
