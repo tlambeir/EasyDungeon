@@ -20,7 +20,7 @@ export class FileUploadComponent {
         //set the header as multipart
         this.headers = new Headers();
         this.headers.set('Content-Type', 'multipart/form-data');
-        this.url = 'http://localhost:8000';
+        this.url = 'http://localhost:8000/image';
     }
 
 //onChange file listener

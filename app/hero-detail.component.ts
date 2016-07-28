@@ -31,7 +31,7 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
                 this.heroService.getHero(id)
                     .then(hero => this.hero = hero);
             } else {
-                this.navigated = false;
+                this.navigated = true;
                 this.hero = new Hero();
             }
         });

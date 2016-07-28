@@ -20,6 +20,10 @@ const routes: RouterConfig = [
         component: HeroDetailComponent
     },
     {
+        path: 'detail',
+        component: HeroDetailComponent
+    },
+    {
         path: 'heroes',
         component: HeroesComponent
     },

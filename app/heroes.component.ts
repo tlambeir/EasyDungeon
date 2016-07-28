@@ -34,7 +34,6 @@ export class HeroesComponent implements OnInit {
     }
 
     close(savedHero: Hero) {
-        this.addingHero = false;
         if (savedHero) { this.getHeroes(); }
     }
 
@@ -55,12 +54,15 @@ export class HeroesComponent implements OnInit {
 
     onSelect(hero: Hero) {
         this.selectedHero = hero;
-        this.addingHero = false;
         this.gotoDetail();
     }
 
     gotoDetail() {
-        this.router.navigate(['/detail', this.selectedHero.id]);
+        if(this.selectedHero){
+            this.router.navigate(['/detail', this.selectedHero.id]);
+        } else {
+            this.router.navigate(['/detail']);
+        }
     }
 }
 
