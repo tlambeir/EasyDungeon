@@ -3,6 +3,8 @@ import { provideRouter, RouterConfig }  from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { HeroesComponent } from './heroes.component';
 import { HeroDetailComponent } from './hero-detail.component';
+import { MapsComponent } from './maps.component';
+import { MapDetailComponent } from './map-detail.component';
 import { DungeonComponent } from './dungeon.component';
 
 const routes: RouterConfig = [
@@ -16,12 +18,24 @@ const routes: RouterConfig = [
         component: DashboardComponent
     },
     {
-        path: 'detail/:id',
+        path: 'heroes/detail/:id',
         component: HeroDetailComponent
     },
     {
-        path: 'detail',
+        path: 'heroes/detail',
         component: HeroDetailComponent
+    },
+    {
+        path: 'maps/detail/:id',
+        component: MapDetailComponent
+    },
+    {
+        path: 'maps/detail',
+        component: MapDetailComponent
+    },
+    {
+        path: 'maps',
+        component: MapsComponent
     },
     {
         path: 'heroes',

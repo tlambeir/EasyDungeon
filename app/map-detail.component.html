@@ -1,0 +1,41 @@
+<div style="padding: 10px; margin-top: 150px">
+    <div *ngIf="map">
+        <h2>{{map.name}} details!</h2>
+        <div>
+            <label>id: </label>{{map.id}}</div>
+        <div>
+            <label>Name: </label>
+            <input [(ngModel)]="map.name" placeholder="name" />
+        </div>
+        <div>
+            <label>Enable Grid: </label>
+            <select [(ngModel)]="map.gridEnabled">
+                <option value="{{1}}">Yes</option>
+                <option value="{{0}}">No</option>
+            </select>
+        </div>
+        <div>
+            <label>Grid color: </label>
+            <input [(ngModel)]="map.gridColor" placeholder="#000000" />
+        </div>
+        <div>
+            <label>Grid seperation: </label>
+            <input [(ngModel)]="map.gridSeperation" placeholder="64" />
+        </div>
+        <div>
+            <label>Image:</label>
+            <file-upload [object]="map"></file-upload>
+            <div>
+                <img src="{{map.imagePath}}">
+            </div>
+        </div>
+        <button (click)="goBack()">Back</button>
+        <button (click)="save()">Save</button>
+    </div>
+</div>
+
+<!--
+Copyright 2016 Google Inc. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at http://angular.io/license
+-->

@@ -2,6 +2,7 @@ import { Component, OnInit }          from '@angular/core';
 import { Router, ROUTER_DIRECTIVES }  from '@angular/router';
 
 import { HeroService }        from './hero.service';
+import { MapService }        from './map.service';
 
 @Component({
     selector: 'my-app',
@@ -12,6 +13,7 @@ import { HeroService }        from './hero.service';
             <h1>{{title}}</h1>
             <nav>
               <a [routerLink]="['/heroes']" routerLinkActive="active">Heroes</a>
+              <a [routerLink]="['/maps']" routerLinkActive="active">Maps</a>
               <a [routerLink]="['/dungeon']" routerLinkActive="active">Dungeon</a>
             </nav>
         </div>
@@ -21,6 +23,7 @@ import { HeroService }        from './hero.service';
     directives: [ROUTER_DIRECTIVES],
     providers: [
         HeroService,
+        MapService
     ]
 })
 export class AppComponent implements OnInit {

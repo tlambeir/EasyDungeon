@@ -2,24 +2,24 @@ import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angu
 
 import { ActivatedRoute } from '@angular/router';
 
-import { Hero }        from './hero';
-import { HeroService } from './hero.service';
+import { Map }        from './map';
+import { MapService } from './map.service';
 import { FileUploadComponent } from './file-upload.component';
 
 @Component({
-    selector: 'my-hero-detail',
-    templateUrl: 'app/hero-detail.component.html',
+    selector: 'my-map-detail',
+    templateUrl: 'app/map-detail.component.html',
     styleUrls: ['app/detail.component.css'],
     directives: [FileUploadComponent]
 })
-export class HeroDetailComponent implements OnInit, OnDestroy {
-    @Input() hero: Hero;
+export class MapDetailComponent implements OnInit, OnDestroy {
+    @Input() map: Map;
     @Output() close = new EventEmitter();
     error: any;
     sub: any;
     navigated = false; // true if navigated here
     constructor(
-        private heroService: HeroService,
+        private mapService: MapService,
         private route: ActivatedRoute) {
     }
 
@@ -28,11 +28,11 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
             if (params['id'] !== undefined) {
                 let id = +params['id'];
                 this.navigated = true;
-                this.heroService.getHero(id)
-                    .then(hero => this.hero = hero);
+                this.mapService.getMap(id)
+                    .then(map => this.map = map);
             } else {
                 this.navigated = true;
-                this.hero = new Hero();
+                this.map = new Map();
             }
         });
     }
@@ -42,23 +42,16 @@ export class HeroDetailComponent implements OnInit, OnDestroy {
     }
 
     save() {
-        this.heroService
-            .save(this.hero)
-            .then(hero => {
-                this.hero = hero; // saved hero, w/ id if new
-                this.goBack(hero);
+        this.mapService
+            .save(this.map)
+            .then(map => {
+                this.map = map; // saved map, w/ id if new
+                this.goBack(map);
             })
             .catch(error => this.error = error); // TODO: Display error message
     }
-    goBack(savedHero: Hero = null) {
-        this.close.emit(savedHero);
+    goBack(savedMap: Map = null) {
+        this.close.emit(savedMap);
         if (this.navigated) { window.history.back(); }
     }
 }
-
-
-/*
- Copyright 2016 Google Inc. All Rights Reserved.
- Use of this source code is governed by an MIT-style license that
- can be found in the LICENSE file at http://angular.io/license
- */

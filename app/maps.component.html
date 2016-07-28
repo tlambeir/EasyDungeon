@@ -1,0 +1,22 @@
+<div style="padding: 10px; margin-top: 150px">
+    <h2>My Maps</h2>
+    <ul class="maps">
+        <li *ngFor="let map of maps"  (click)="onSelect(map)" [class.selected]="map === selectedMap">
+        <span class="map-element">
+          <span class="badge">{{map.id}}</span> {{map.name}}
+        </span>
+            <button class="delete-button" (click)="deleteMap(map, $event)">Delete</button>
+        </li>
+    </ul>
+
+    <div class="error" *ngIf="error">{{error}}</div>
+    <button (click)="gotoDetail()">Add New Map</button>
+
+</div>
+
+
+<!--
+Copyright 2016 Google Inc. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at http://angular.io/license
+-->

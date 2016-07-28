@@ -1,6 +1,5 @@
 import {Component, Input} from '@angular/core';
 import { Headers, Http, Response, RequestOptions, Request, RequestMethod } from '@angular/http';
-import { Hero }        from './hero';
 
 @Component({
     selector: 'file-upload',
@@ -11,7 +10,7 @@ import { Hero }        from './hero';
     //directives: [FORM_DIRECTIVES]
 })
 export class FileUploadComponent {
-    @Input() hero: Hero
+    @Input() object: any
     public file: File;
     public url: string;
     headers: Headers;
@@ -36,7 +35,7 @@ export class FileUploadComponent {
         this.http
             .post(this.url, fd)
             .toPromise()
-            .then(response => this.hero.imagePath = response.json().imagePath)
+            .then(response => this.object.imagePath = response.json().imagePath)
             .catch(this.handleError);
     }
 
