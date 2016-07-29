@@ -4,6 +4,8 @@ import { Hero }        from './hero';
 import { HeroService } from './hero.service';
 import { Map }        from './map';
 import { MapService } from './map.service';
+import { Dashboard }        from './dashboard';
+import { DashboardService } from './dashboard.service';
 
 @Component({
     selector: 'dungeon',
@@ -15,11 +17,13 @@ export class DungeonComponent{
     canvas:any;
     map:Map;
     activeHero:Hero;
+    dashboard:Dashboard;
 
     constructor(
         private router: Router,
         private heroService: HeroService,
-        private mapService: MapService) {
+        private mapService: MapService,
+        private dashboardService: DashboardService) {
     }
 
     dungeon : any;
@@ -116,7 +120,7 @@ export class DungeonComponent{
 
     getMap(){
         return this.mapService
-            .getMap(3)
+            .getMap(this.dashboard.map.id)
             .then(result => this.map = result);
     }
 
@@ -277,6 +281,8 @@ export class DungeonComponent{
         let ctx = this.canvas.getContext('2d');
         this.trackTransforms(ctx);
 
+        this.dashboard = this.dashboardService.getDashboard();
+
 
         this.dungeon = new Image;
         this.dungeon.onload = () => {
@@ -305,19 +311,26 @@ export class DungeonComponent{
                 switch (event.keyCode) {
                     case 37:
                         angle = 90;
+                        event.preventDefault();
+                        this.turnHero(angle);
                         break;
                     case 38:
                         angle = 180;
+                        event.preventDefault();
+                        this.turnHero(angle);
                         break;
                     case 39:
                         angle = 270;
+                        event.preventDefault();
+                        this.turnHero(angle);
                         break;
                     case 40:
                         angle = 0
+                        event.preventDefault();
+                        this.turnHero(angle);
                         break;
                 }
-                event.preventDefault();
-                this.turnHero(angle);
+
             }
 
         }.bind(this));

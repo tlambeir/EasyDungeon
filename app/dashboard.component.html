@@ -1,12 +1,15 @@
-<h3>Top Heroes</h3>
-<div class="grid grid-pad">
-    <div *ngFor="let hero of heroes" (click)="gotoDetail(hero)" class="col-1-4">
-        <div class="module hero">
-            <h4>{{hero.name}}</h4>
-        </div>
+<div style="padding: 10px; margin-top: 150px">
+    <h2>Dashboard</h2>
+    <div>
+        <label>Select Map:</label>
+        <select [(ngModel)]="dashboard.map" (change)="onChange($event.target.value)"> // value is a string or number
+            <option *ngFor="let map of maps" [ngValue]="map">{{map.name}}</option>
+        </select>
+    </div>
+    <div>
+        <button (click)="start()">start</button>
     </div>
 </div>
-
 
 <!--
 Copyright 2016 Google Inc. All Rights Reserved.

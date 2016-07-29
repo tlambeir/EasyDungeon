@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router }           from '@angular/router';
 
-import { Hero }        from './hero';
-import { HeroService } from './hero.service';
+import { Dashboard }        from './dashboard';
+import { DashboardService } from './dashboard.service';
+import { Map }                from './map';
+import { MapService } from './map.service';
 
 @Component({
     selector: 'my-dashboard',
@@ -11,22 +13,32 @@ import { HeroService } from './hero.service';
 })
 export class DashboardComponent implements OnInit {
 
-    heroes: Hero[] = [];
+    dashboard: Dashboard;
+    maps: Map[];
 
     constructor(
         private router: Router,
-        private heroService: HeroService) {
+        private dashboardService: DashboardService,
+        private mapService: MapService) {
     }
 
     ngOnInit() {
-        this.heroService.getHeroes()
-            .then(heroes => this.heroes = heroes.slice(1, 5));
+        this.mapService.getMaps()
+            .then(maps => this.maps = maps);
+        this.dashboard = this.dashboardService.getDashboard();
+        console.info('dashboard loaded',this.dashboard);
+
     }
 
-    gotoDetail(hero: Hero) {
-        let link = ['/detail', hero.id];
-        this.router.navigate(link);
+    start(){
+        this.router.navigate(['dungeon']);
     }
+
+    onChange(dashboard){
+        console.info('dashboard change',dashboard);
+        this.dashboardService.setDashboard(this.dashboard);
+    }
+
 }
 
 
