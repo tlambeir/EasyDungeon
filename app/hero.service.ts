@@ -44,6 +44,7 @@ export class HeroService {
         saveHero.posX = hero.posX;
         saveHero.posY = hero.posY;
         saveHero.imagePath = hero.imagePath;
+        saveHero.angle = hero.angle;
         if (saveHero.id) {
             return this.put(saveHero);
         }
@@ -64,8 +65,6 @@ export class HeroService {
 
     // Add new Hero
     private post(hero: Hero): Promise<Hero> {
-
-        console.dir(hero);
         let headers = new Headers({
             'Content-Type': 'application/json'});
 

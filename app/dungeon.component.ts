@@ -14,6 +14,7 @@ export class DungeonComponent{
     heroes: Hero[] = [];
     canvas:any;
     map:Map;
+    activeHero:Hero;
 
     constructor(
         private router: Router,
@@ -150,15 +151,20 @@ export class DungeonComponent{
         this.redraw(ctx);
     }
 
+
+    turnHero(angle){
+        this.activeHero.angle = angle;
+        let ctx = this.canvas.getContext('2d');
+        this.redraw(ctx);
+        this.heroService.save(this.activeHero);
+    }
+
+
     isHero(evt, lastX, lastY){
         let isHero = false;
         for (let hero of this.heroes) {
             let posx = this.startX + hero.posX * this.map.gridSeperation - this.map.gridSeperation;
             let posY = this.startY  + hero.posY * this.map.gridSeperation - this.map.gridSeperation;
-            if(hero.id == 37){
-                console.log(posx, posY);
-                console.log(lastX, lastY);
-            }
             if(this.collides(posx, posY, lastX, lastY)){
                 hero.oldX = hero.posX;
                 hero.oldY = hero.posY;
@@ -175,7 +181,6 @@ export class DungeonComponent{
 
         let left = posx, right = posx+this.map.gridSeperation;
         let top = posY, bottom = posY+this.map.gridSeperation;
-        console.log(left,right,top,bottom)
         if (right >= x
             && left <= x
             && bottom >= y
@@ -193,7 +198,7 @@ export class DungeonComponent{
             if(hero.dragged){
                 this.draggedHeroLastX = x;
                 this.draggedHeroLastY = y;
-                this.drawHero(hero, ctx, x - this.map.gridSeperation/2, y - this.map.gridSeperation/2);
+                this.drawHero(hero, ctx, x, y);
             }
         }
     }
@@ -221,6 +226,7 @@ export class DungeonComponent{
                 }
                 hero.dragged = false;
                 this.redraw(ctx);
+                this.activeHero = hero;
             }
         }
     }
@@ -291,15 +297,38 @@ export class DungeonComponent{
 
         let lastX=this.canvas.width/2, lastY=this.canvas.height/2;
         let dragStart,dragged;
+
+        let targetElement = document.body;
+        targetElement.addEventListener('keydown', function (event) {
+            let angle;
+            if(this.activeHero){
+                switch (event.keyCode) {
+                    case 37:
+                        angle = 90;
+                        break;
+                    case 38:
+                        angle = 180;
+                        break;
+                    case 39:
+                        angle = 270;
+                        break;
+                    case 40:
+                        angle = 0
+                        break;
+                }
+                event.preventDefault();
+                this.turnHero(angle);
+            }
+
+        }.bind(this));
+
         this.canvas.addEventListener('mousedown',function(evt){
             lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
             lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
             let pt = ctx.transformedPoint(lastX,lastY);
             if(this.isHero(evt, pt.x, pt.y)){
-                console.log('ishero');
                 //drag the hero
             } else {
-                console.log('isnothero');
                 //drag the map
                 //document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none'; // breaks ts compilation
                 dragStart = ctx.transformedPoint(lastX,lastY);
