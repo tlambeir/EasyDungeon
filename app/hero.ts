@@ -9,6 +9,7 @@ export class Hero {
     image: any;
     dragged:boolean;
     file:File;
+    angle:number;
 }
 
 

@@ -2,6 +2,8 @@ import { Component, ViewChild} from '@angular/core';
 import { Router }           from '@angular/router';
 import { Hero }        from './hero';
 import { HeroService } from './hero.service';
+import { Map }        from './map';
+import { MapService } from './map.service';
 
 @Component({
     selector: 'dungeon',
@@ -11,23 +13,24 @@ export class DungeonComponent{
     @ViewChild('layout') canvasRef;
     heroes: Hero[] = [];
     canvas:any;
+    map:Map;
 
     constructor(
         private router: Router,
-        private heroService: HeroService) {
+        private heroService: HeroService,
+        private mapService: MapService) {
     }
 
-    map : any;
+    dungeon : any;
     ball   = new Image;
     startX : any;
     startY : any;
-    seperation = 64;
 
     drawGrid() {
         let gridOptions = {
             majorLines: {
-                separation: this.seperation,
-                color: '#FF0000'
+                separation: this.map.gridSeperation,
+                color: this.map.gridColor
             }
         };
 
@@ -53,27 +56,29 @@ export class DungeonComponent{
         let i = null;
         let x = null;
         let y = null;
-        let startX = this.canvas.width / 2 - this.map.width / 2;
-        let startY = this.canvas.height / 2 - this.map.height / 2;
+        let startX = this.canvas.width / 2 - this.dungeon.width / 2;
+        let startY = this.canvas.height / 2 - this.dungeon.height / 2;
         this.startX  = startX;
         this.startY  = startY;
 
-        xCount = Math.floor(this.map.width / lineOptions.separation);
-        yCount = Math.floor(this.map.height / lineOptions.separation);
+        xCount = Math.floor(this.dungeon.width / lineOptions.separation);
+        yCount = Math.floor(this.dungeon.height / lineOptions.separation);
 
         for (i = 0; i <= yCount; i++) {
             y = startY + (i * lineOptions.separation);
             ctx.moveTo(startX, y);
-            ctx.lineTo(this.canvas.width / 2 + this.map.width / 2, y);
-            ctx.stroke();
+            ctx.lineTo(this.canvas.width / 2 + this.dungeon.width / 2, y);
+
         }
+        ctx.stroke();
 
         for (i = 0; i <= xCount; i++) {
             x = startX + (i * lineOptions.separation);
             ctx.moveTo(x, startY);
-            ctx.lineTo(x, this.canvas.height / 2 + this.map.height / 2);
-            ctx.stroke();
+            ctx.lineTo(x, this.canvas.height / 2 + this.dungeon.height / 2);
+
         }
+        ctx.stroke();
 
         ctx.closePath();
 
@@ -86,8 +91,8 @@ export class DungeonComponent{
         let p1 = ctx.transformedPoint(0,0);
         let p2 = ctx.transformedPoint(this.canvas.width,this.canvas.height);
         ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
-        ctx.drawImage(this.map, this.canvas.width / 2 - this.map.width / 2,
-            this.canvas.height / 2 - this.map.height / 2);
+        ctx.drawImage(this.dungeon, this.canvas.width / 2 - this.dungeon.width / 2,
+            this.canvas.height / 2 - this.dungeon.height / 2);
 
         this.drawGrid();
         this.drawHeroes(ctx)
@@ -108,33 +113,52 @@ export class DungeonComponent{
             .then(result => this.heroes = result);
     }
 
+    getMap(){
+        return this.mapService
+            .getMap(3)
+            .then(result => this.map = result);
+    }
+
     drawHeroes(ctx){
         for (let hero of this.heroes) {
             if(!hero.dragged){
-                let posx = this.startX + hero.posX * this.seperation - this.seperation;
-                let posY = this.startY  + hero.posY * this.seperation - this.seperation;
+                let posx = this.startX + hero.posX * this.map.gridSeperation - this.map.gridSeperation/2;
+                let posY = this.startY  + hero.posY *this.map.gridSeperation - this.map.gridSeperation/2;
                 this.drawHero(hero, ctx, posx, posY);
             }
         }
     }
 
+    degreesToRad(degrees){
+        return degrees * Math.PI / 180;
+    }
+
     drawHero(hero, ctx, posx, posY){
-        ctx.drawImage(hero.image, posx, posY, this.seperation, this.seperation);
+        ctx.translate( posx, posY );
+        ctx.rotate( this.degreesToRad(hero.angle) );
+        ctx.drawImage( hero.image, -this.map.gridSeperation/2 , -this.map.gridSeperation/2, this.map.gridSeperation, this.map.gridSeperation  );
+        ctx.rotate( -this.degreesToRad(hero.angle) );
+        ctx.translate( -posx, -posY );
+        //ctx.drawImage(hero.image, posx, posY, this.map.gridSeperation, this.map.gridSeperation);
     }
 
     removeHero(hero){
         let ctx = this.canvas.getContext('2d');
-        let posx = this.startX + hero.posX * this.seperation - this.seperation;
-        let posY = this.startY  + hero.posY * this.seperation - this.seperation;
-        ctx.clearRect(posx,posY,this.seperation,this.seperation);
+        let posx = this.startX + hero.posX * this.map.gridSeperation - this.map.gridSeperation;
+        let posY = this.startY  + hero.posY * this.map.gridSeperation - this.map.gridSeperation;
+        ctx.clearRect(posx,posY,this.map.gridSeperation,this.map.gridSeperation);
         this.redraw(ctx);
     }
 
     isHero(evt, lastX, lastY){
         let isHero = false;
         for (let hero of this.heroes) {
-            let posx = this.startX + hero.posX * this.seperation - this.seperation;
-            let posY = this.startY  + hero.posY * this.seperation - this.seperation;
+            let posx = this.startX + hero.posX * this.map.gridSeperation - this.map.gridSeperation;
+            let posY = this.startY  + hero.posY * this.map.gridSeperation - this.map.gridSeperation;
+            if(hero.id == 37){
+                console.log(posx, posY);
+                console.log(lastX, lastY);
+            }
             if(this.collides(posx, posY, lastX, lastY)){
                 hero.oldX = hero.posX;
                 hero.oldY = hero.posY;
@@ -149,8 +173,9 @@ export class DungeonComponent{
     collides(posx, posY, x, y) {
         let isCollision = false;
 
-        let left = posx, right = posx+this.seperation;
-        let top = posY, bottom = posY+this.seperation;
+        let left = posx, right = posx+this.map.gridSeperation;
+        let top = posY, bottom = posY+this.map.gridSeperation;
+        console.log(left,right,top,bottom)
         if (right >= x
             && left <= x
             && bottom >= y
@@ -168,7 +193,7 @@ export class DungeonComponent{
             if(hero.dragged){
                 this.draggedHeroLastX = x;
                 this.draggedHeroLastY = y;
-                this.drawHero(hero, ctx, x - this.seperation/2, y - this.seperation/2);
+                this.drawHero(hero, ctx, x - this.map.gridSeperation/2, y - this.map.gridSeperation/2);
             }
         }
     }
@@ -179,8 +204,8 @@ export class DungeonComponent{
             if(hero.dragged){
                 this.draggedHeroLastX = null;
                 this.draggedHeroLastY = null;
-                let newPosX = Math.ceil((x-this.startX)/this.seperation);
-                let newPosY = Math.ceil((y-this.startY)/this.seperation);
+                let newPosX = Math.ceil((x-this.startX)/this.map.gridSeperation);
+                let newPosY = Math.ceil((y-this.startY)/this.map.gridSeperation);
                 let taken = false;
                 for (let otherHero of this.heroes) {
                     if(otherHero.id != hero.id){
@@ -247,20 +272,22 @@ export class DungeonComponent{
         this.trackTransforms(ctx);
 
 
-        this.map = new Image;
-        this.map.onload = () => {
+        this.dungeon = new Image;
+        this.dungeon.onload = () => {
             this.canvas.width  = window.innerWidth;
             this.canvas.height = window.innerHeight;
+
             this.getHeroes().then(()=>{
                 this.loader(this.heroes, this.loadImage, function () {
                     this.redraw(ctx);
                 }.bind(this));
             });
         };
-        this.map.src = 'images/map.png';
-
-        this.ball.src   = 'http://phrogz.net/tmp/alphaball.png';
-
+        this.getMap().then(
+            ()=>{
+                this.dungeon.src = this.map.imagePath;
+            }
+        );
 
         let lastX=this.canvas.width/2, lastY=this.canvas.height/2;
         let dragStart,dragged;
@@ -269,8 +296,10 @@ export class DungeonComponent{
             lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
             let pt = ctx.transformedPoint(lastX,lastY);
             if(this.isHero(evt, pt.x, pt.y)){
+                console.log('ishero');
                 //drag the hero
             } else {
+                console.log('isnothero');
                 //drag the map
                 //document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none'; // breaks ts compilation
                 dragStart = ctx.transformedPoint(lastX,lastY);
@@ -288,7 +317,7 @@ export class DungeonComponent{
                 this.redraw(ctx);
             }
             if(this.draggedHeroLastX && this.draggedHeroLastY && (this.draggedHeroLastX!==pt.x || this.draggedHeroLastY !==pt.y)){
-                ctx.clearRect(this.draggedHeroLastX,this.draggedHeroLastY,this.seperation,this.seperation);
+                ctx.clearRect(this.draggedHeroLastX,this.draggedHeroLastY,this.map.gridSeperation,this.map.gridSeperation);
                 this.redraw(ctx);
             }
             this.dragHero(pt.x, pt.y);
