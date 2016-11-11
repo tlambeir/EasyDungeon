@@ -10,7 +10,7 @@ import { DungeonComponent } from './dungeon.component';
 const routes: RouterConfig = [
     {
         path: '',
-        redirectTo: '/dungeon',
+        redirectTo: '/maps',
         pathMatch: 'full'
     },
     {

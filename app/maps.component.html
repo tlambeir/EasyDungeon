@@ -5,7 +5,9 @@
         <span class="map-element">
           <span class="badge">{{map.id}}</span> {{map.name}}
         </span>
+            <button style="margin-left: 10px" class="delete-button" (click)="launchMap(map, $event)">start</button>
             <button class="delete-button" (click)="deleteMap(map, $event)">Delete</button>
+
         </li>
     </ul>
 

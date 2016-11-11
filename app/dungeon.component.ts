@@ -10,6 +10,7 @@ import { DashboardService } from './dashboard.service';
 @Component({
     selector: 'dungeon',
     templateUrl: 'app/dungeon.component.html',
+    providers: [DashboardService]
 })
 export class DungeonComponent{
     @ViewChild('layout') canvasRef;
@@ -282,6 +283,8 @@ export class DungeonComponent{
         this.trackTransforms(ctx);
 
         this.dashboard = this.dashboardService.getDashboard();
+
+        console.dir(this.dashboard);
 
 
         this.dungeon = new Image;

@@ -1,17 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { Router }            from '@angular/router';
 
+import { Dashboard }        from './dashboard';
+import { DashboardService } from './dashboard.service';
 import { Map }                from './map';
 import { MapService }         from './map.service';
 import { MapDetailComponent } from './map-detail.component';
+
 
 @Component({
     selector: 'my-maps',
     templateUrl: 'app/maps.component.html',
     styleUrls:  ['app/maps.component.css'],
-    directives: [MapDetailComponent]
+    directives: [MapDetailComponent],
+    providers: [DashboardService]
 })
 export class MapsComponent implements OnInit {
+    dashboard: Dashboard;
     maps: Map[];
     selectedMap: Map;
     addingMap = false;
@@ -19,6 +24,7 @@ export class MapsComponent implements OnInit {
 
     constructor(
         private router: Router,
+        private dashboardService: DashboardService,
         private mapService: MapService) { }
 
     getMaps() {
@@ -48,8 +54,17 @@ export class MapsComponent implements OnInit {
             .catch(error => this.error = error);
     }
 
+    launchMap(map: Map, event: any){
+        event.stopPropagation();
+        this.dashboard = new Dashboard();
+        this.dashboard.map = map;
+        this.dashboardService.setDashboard(this.dashboard);
+        this.router.navigate(['dungeon']);
+    }
+
     ngOnInit() {
         this.getMaps();
+        /*this.dashboard = this.dashboardService.getDashboard();*/
     }
 
     onSelect(map: Map) {
